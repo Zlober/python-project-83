@@ -1,0 +1,45 @@
+[tool.poetry]
+
+
+
+
+
+classifiers = [
+	"Development Status :: 5 - Production/Stable",
+	"Environment :: Console",
+	"Intended Audience :: Education",
+	"Natural Language :: English",
+	"Operating System :: OS Independent",
+	"Programming Language :: Python",
+]
+
+name = "hexlet-code"
+version = "0.1.0"
+description = "Page Analyzer"
+authors = ["Sachkov Ilya <sos31337@gmail.com>"]
+readme = "README.md"
+packages = [{include = "python_project_83"}]
+repository = "https://github.com/Zlober/python-project-83"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+Flask = "^2.2.2"
+gunicorn = "^20.1.0"
+python-dotenv = "^0.21.0"
+psycopg = "^3.1.6"
+urlparse2 = "^1.1.1"
+validators = "^0.20.0"
+requests = "^2.28.1"
+beautifulsoup4 = "^4.11.1"
+
+
+[tool.poetry.dev-dependencies]
+flake8 = "^4.0.1"
+pytest = "^7.2.0"
+
+[tool.poetry.scripts]
+gendiff = "page_analyzer.app:main"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
