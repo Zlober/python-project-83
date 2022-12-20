@@ -19,4 +19,3 @@ jobs:
           poetry build
           make install
           make lint
-          make tests
