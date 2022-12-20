@@ -1,5 +1,5 @@
 install:
-	poetry instal
+	poetry install
 build:
 	poetry build
 publish:
