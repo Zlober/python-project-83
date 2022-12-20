@@ -38,7 +38,7 @@ flake8 = "^4.0.1"
 pytest = "^7.2.0"
 
 [tool.poetry.scripts]
-gendiff = "page_analyzer.app:main"
+page_analyzer = "page_analyzer.app:main"
 
 [build-system]
 requires = ["poetry-core"]
