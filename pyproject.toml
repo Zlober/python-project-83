@@ -1,9 +1,9 @@
 [tool.poetry]
-
-
-
-
-
+name = "hexlet-code"
+version = "0.1.0"
+description = "Page Analyzer"
+authors = ["Sachkov Ilya <sos31337@gmail.com>"]
+repository = "https://github.com/Zlober/python-project-83"
 classifiers = [
 	"Development Status :: 5 - Production/Stable",
 	"Environment :: Console",
@@ -12,14 +12,8 @@ classifiers = [
 	"Operating System :: OS Independent",
 	"Programming Language :: Python",
 ]
-
-name = "hexlet-code"
-version = "0.1.0"
-description = "Page Analyzer"
-authors = ["Sachkov Ilya <sos31337@gmail.com>"]
 readme = "README.md"
-packages = [{include = "python_project_83"}]
-repository = "https://github.com/Zlober/python-project-83"
+packages = [{include = "page_analyzer"}]
 
 [tool.poetry.dependencies]
 python = "^3.8"
