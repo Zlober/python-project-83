@@ -25,6 +25,7 @@ beautifulsoup4 = "^4.11.1"
 psycopg2 = "^2.9.5"
 validators = "^0.20.0"
 urlparse2 = "^1.1.1"
+setuptools = "^65.6.3"
 
 
 [tool.poetry.dev-dependencies]
