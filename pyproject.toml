@@ -26,7 +26,6 @@ requests = "^2.28.1"
 beautifulsoup4 = "^4.11.1"
 setuptools = "^65.6.3"
 psycopg2 = "^2.9.5"
-ez_setup = "^0.9"
 
 
 [tool.poetry.dev-dependencies]
