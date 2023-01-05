@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block messages %}
+      {% if messages %}
+          {% for category, message in messages %}
+              {% if category == 'success' %}
+              <div class="alert alert-success" role="alert">{{ message }}</div>
+              {% endif %}
+              {% if category == 'warning' %}
+              <div class="alert alert-info" role="alert">{{ message }}</div>
+              {% endif %}
+              {% if category == 'error' %}
+              <div class="alert alert-danger" role="alert">{{ message }}</div>
+              {% endif %}
+          {% endfor %}
+      {% endif %}
+{% endblock %}
+
+
+{% block main %}
+      <h1>Сайт: {{ url }}</h1>
+
+
+  <div class="table-responsive">
+    <table class="table table-bordered table-hover text-nowrap" data-test="url">
+      <tbody>
+        <tr>
+          <td>ID</td>
+          <td>{{ id }}</td>
+        </tr>
+        <tr>
+          <td>Имя</td>
+          <td>{{ url }}</td>
+        </tr>
+        <tr>
+          <td>Дата создания</td>
+          <td>{{ created_at }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+    <h2 class="mt-5 mb-3">Проверки</h2>
+    <form method="post" action="/urls/{{ id }}/checks">
+    <input type="submit" class="btn btn-primary" value="Запустить проверку">
+    </form>
+
+  <div>
+    <table class="table table-bordered table-hover mt-2" data-test="checks">
+      <tbody>
+
+    <tr>
+        <th>ID</th>
+        <th>Код ответа</th>
+        <th>h1</th>
+        <th>title</th>
+        <th>description</th>
+        <th>Дата создания</th>
+    </tr>
+    {% if checks %}
+        {% for check in checks %}
+            {% set id, status_code, h1, title, description, date = check %}
+            <tr>
+                <td>{{ id }}</td>
+                <td>{{ status_code }}</td>
+                <td>{{ h1 }}</td>
+                <td>{{ title }}</td>
+                <td>{{ description }}</td>
+                <td>{{ date }}</td>
+            </tr>
+        {% endfor %}
+      {% endif %}
+      </tbody>
+    </table>
+  </div>
+
+{% endblock %}

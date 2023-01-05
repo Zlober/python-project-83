@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block main %}
+      <h1>Сайты</h1>
+
+
+<div class="table-responsive">
+  <table class="table table-bordered table-hover text-nowrap" data-test="urls">
+    <tbody>
+      <tr>
+        <th>ID</th>
+        <th>Имя</th>
+        <th>Последняя проверка</th>
+        <th>Код ответа</th>
+      </tr>
+    {% if urls %}
+        {% for url in urls %}
+            {% set id, name, date, code = url %}
+        <tr>
+          <td>{{ id }}</td>
+          <td>
+            <a href="/urls/{{ id }}">
+              {{ name }}
+            </a>
+          </td>
+
+          <td>{{ date }}</td>
+          <td>{{ code }}</td>
+
+        </tr>
+
+        {% endfor %}
+    {% endif %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
