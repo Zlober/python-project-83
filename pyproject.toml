@@ -23,6 +23,8 @@ python-dotenv = "^0.21.0"
 requests = "^2.28.1"
 beautifulsoup4 = "^4.11.1"
 psycopg2 = "^2.9.5"
+validators = "^0.20.0"
+urlparse2 = "^1.1.1"
 
 
 [tool.poetry.dev-dependencies]
