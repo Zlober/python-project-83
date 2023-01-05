@@ -104,7 +104,7 @@ def get_url_id(id):
                     url_checks
                 WHERE
                     url_id=%s
-                ORDER BY 
+                ORDER BY
                     id
                 DESC;
                 """, (id,)
