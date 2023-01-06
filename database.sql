@@ -1,3 +1,6 @@
+BEGIN;
+DROP DATABASE IF EXISTS pages;
+
 CREATE DATABASE pages;
     CREATE TABLE urls (
         id bigint PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
@@ -13,3 +16,4 @@ CREATE DATABASE pages;
         description text,
         created_at date
     );
+COMMIT;
