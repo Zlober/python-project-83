@@ -25,7 +25,7 @@ beautifulsoup4 = "^4.11.1"
 validators = "^0.20.0"
 psycopg2-binary = "^2.9.5"
 urlparse2 = "^1.1.1"
-flake8 = "^6.0.0"
+flake8 = "^5.0.4"
 
 
 [tool.poetry.dev-dependencies]
