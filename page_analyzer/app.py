@@ -45,7 +45,7 @@ def post_urls():
     with psycopg2.connect(DATABASE_URL) as conn:
         with conn.cursor() as curs:
             curs.execute("SELECT id FROM urls WHERE name=%s", (url,))
-            id = curs.fetchone()
+            id = curs.fetchone()[0]
     if id:
         flash('Страница уже существует', 'warning')
         return redirect(url_for('get_url_id', id=id))
