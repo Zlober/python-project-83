@@ -39,7 +39,8 @@ def post_urls():
             flash('URL обязателен', 'error')
         if len(url) > 255:
             flash('URL превышает 255 символов', 'error')
-        return redirect(url_for('index'))
+        messages = get_flashed_messages(with_categories=True)
+        return render_template('index.html', messages=messages), 422
     url = urlparse(url)
     url = f'{url.scheme}://{url.netloc}'
     with psycopg2.connect(DATABASE_URL) as conn:
