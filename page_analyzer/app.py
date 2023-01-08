@@ -124,47 +124,46 @@ def get_url_id(id):
 
 @app.post('/urls/<int:id>/checks')
 def post_check_id(id):
+    with psycopg2.connect(DATABASE_URL) as conn:
+        with conn.cursor() as curs:
+            curs.execute("SELECT name FROM urls WHERE id=%s;", (id,))
+            url = curs.fetchone()[0]
     try:
-        with psycopg2.connect(DATABASE_URL) as conn:
-            with conn.cursor() as curs:
-                curs.execute("SELECT name FROM urls WHERE id=%s;", (id,))
-                url = curs.fetchone()[0]
-        response = requests.get(url)
-        response.raise_for_status()
-        status = response.status_code
-        html_data = response.content
-        soap = BeautifulSoup(html_data, 'html.parser')
-        title = soap.title.text if soap.title is not None else ''
-        h1 = soap.h1.text if soap.h1 is not None else ''
-        content = soap.find('meta', {"name": "description"})
-        content = content.attrs['content'] if content else ''
-        flash('Страница успешно проверена', 'success')
-        with psycopg2.connect(DATABASE_URL) as conn:
-            with conn.cursor() as curs:
-                curs.execute("""
-                                INSERT INTO url_checks (
-                                    url_id,
-                                    status_code,
-                                    h1,
-                                    title,
-                                    description,
-                                    created_at
-                                    )
-                                VALUES (%s, %s, %s, %s, %s, %s)
-                                """,
-                             (
-                                 id,
-                                 status,
-                                 h1,
-                                 title,
-                                 content,
-                                 datetime.date.today()
-                             )
-                             )
-        return redirect(url_for('get_url_id', id=id))
-    except requests.ConnectionError:
+        with requests.get(url) as get:
+            status = get.status_code
+            html_data = get.content
+    except Exception:
         flash('Произошла ошибка при проверке', 'error')
         return redirect(url_for('get_url_id', id=id))
+    soap = BeautifulSoup(html_data, 'html.parser')
+    title = soap.title.text if soap.title is not None else ''
+    h1 = soap.h1.text if soap.h1 is not None else ''
+    content = soap.find('meta', {"name": "description"})
+    content = content.attrs['content'] if content else ''
+    flash('Страница успешно проверена', 'success')
+    with psycopg2.connect(DATABASE_URL) as conn:
+        with conn.cursor() as curs:
+            curs.execute("""
+                        INSERT INTO url_checks (
+                            url_id,
+                            status_code,
+                            h1,
+                            title,
+                            description,
+                            created_at
+                            )
+                        VALUES (%s, %s, %s, %s, %s, %s)
+                        """,
+                         (
+                             id,
+                             status,
+                             h1,
+                             title,
+                             content,
+                             datetime.date.today()
+                         )
+                         )
+    return redirect(url_for('get_url_id', id=id))
 
 
 if __name__ == '__main__':
