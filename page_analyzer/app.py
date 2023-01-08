@@ -1,3 +1,5 @@
+import socket
+
 from flask import (
     Flask,
     render_template,
@@ -132,9 +134,8 @@ def post_check_id(id):
         with requests.get(url) as get:
             status = get.status_code
             html_data = get.content
-    except Exception:
+    except requests.RequestException:
         flash('Произошла ошибка при проверке', 'error')
-        return redirect(url_for('get_url_id', id=id))
     soap = BeautifulSoup(html_data, 'html.parser')
     title = soap.title.text if soap.title is not None else ''
     h1 = soap.h1.text if soap.h1 is not None else ''
