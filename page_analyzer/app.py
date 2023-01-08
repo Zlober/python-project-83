@@ -96,7 +96,7 @@ def get_url_id(id):
                 WHERE
                 id=%s
                 """, (id,)
-                         )
+            )
             name, date = curs.fetchone()
             curs.execute("""
                 SELECT
@@ -109,7 +109,7 @@ def get_url_id(id):
                     id
                 DESC;
                 """, (id,)
-                         )
+            )
             checks = curs.fetchall()
 
     return render_template(
