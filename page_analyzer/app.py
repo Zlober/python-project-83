@@ -160,7 +160,7 @@ def post_check_id(id):
                                  datetime.date.today()
                              )
                              )
-    except requests.RequestException:
+    except Exception:
         flash('Произошла ошибка при проверке', 'error')
     return redirect(url_for('get_url_id', id=id))
 
