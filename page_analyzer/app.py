@@ -132,7 +132,7 @@ def post_check_id(id):
         with requests.get(url) as get:
             status = get.status_code
             html_data = get.content
-    except requests.RequestException:
+    except requests.ConnectionError:
         flash('Произошла ошибка при проверке', 'error')
         return redirect(url_for('get_url_id', id=id))
     soap = BeautifulSoup(html_data, 'html.parser')
