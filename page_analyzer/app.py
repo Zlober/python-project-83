@@ -131,9 +131,11 @@ def post_check_id(id):
             curs.execute("SELECT name FROM urls WHERE id=%s;", (id,))
             url = curs.fetchone()[0]
     try:
-        with requests.get(url) as get:
-            status = get.status_code
-            html_data = get.content
+        response = requests.get(url)
+        if response.status_code != 200:
+            raise requests.RequestException
+        status = response.status_code
+        html_data = response.content
         soap = BeautifulSoup(html_data, 'html.parser')
         title = soap.title.text if soap.title is not None else ''
         h1 = soap.h1.text if soap.h1 is not None else ''
