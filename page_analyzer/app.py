@@ -7,14 +7,14 @@ from flask import (
     get_flashed_messages,
     url_for
 )
-import psycopg2
 import os
 from dotenv import load_dotenv, find_dotenv
 import datetime
 from urllib.parse import urlparse
-import validators
 import requests
 from bs4 import BeautifulSoup
+import validators
+import page_analyzer.db as db
 
 
 load_dotenv(find_dotenv())
@@ -33,90 +33,36 @@ def index():
 @app.post('/urls')
 def post_urls():
     url = request.form.get('url')
-    if not validators.url(url):
-        flash('Некорректный URL', 'error')
-        if len(url) == 0:
-            flash('URL обязателен', 'error')
-        if len(url) > 255:
-            flash('URL превышает 255 символов', 'error')
+    if check_url(url):
         messages = get_flashed_messages(with_categories=True)
         return render_template('index.html', messages=messages), 422
     url = urlparse(url)
     url = f'{url.scheme}://{url.netloc}'
-    with psycopg2.connect(DATABASE_URL) as conn:
-        with conn.cursor() as curs:
-            curs.execute("SELECT id FROM urls WHERE name=%s", (url,))
-            id = curs.fetchone()
-    if id:
+    id = db.create_url(url)
+    if id.id:
         flash('Страница уже существует', 'warning')
         return redirect(url_for('get_url_id', id=id[0]))
     flash('Страница успешно добавлена', category='success')
-    with psycopg2.connect(DATABASE_URL) as conn:
-        with conn.cursor() as curs:
-            curs.execute("""
-                INSERT INTO urls (name, created_at)
-                VALUES (%s, %s)
-                RETURNING id;
-                """,
-                         (url, datetime.date.today())
-                         )
-            id = curs.fetchone()[0]
-    return redirect(url_for('get_url_id', id=id))
+    id = db.insert_url(url, datetime.date.today())
+    return redirect(url_for('get_url_id', id=id.id))
 
 
 @app.get('/urls')
 def get_urls():
-    with psycopg2.connect(DATABASE_URL) as conn:
-        with conn.cursor() as curs:
-            curs.execute("""
-                SELECT
-                    urls.id,
-                    urls.name,
-                    COALESCE(MAX(url_checks.created_at)::varchar, '') AS date,
-                    COALESCE(status_code::varchar, '') AS STATUS
-                FROM urls
-                LEFT JOIN url_checks ON url_checks.url_id = urls.id
-                GROUP BY urls.id, urls.name, url_checks.status_code
-                ORDER BY urls.id DESC;
-            """)
-            urls = curs.fetchall()
+    urls = db.select_all()
     return render_template('urls.html', urls=urls)
 
 
 @app.get('/urls/<int:id>')
 def get_url_id(id):
     message = get_flashed_messages(with_categories=True)
-    with psycopg2.connect(DATABASE_URL) as conn:
-        with conn.cursor() as curs:
-            curs.execute("""
-                SELECT
-                    name, created_at
-                FROM
-                    urls
-                WHERE
-                id=%s
-                """, (id,)
-            )
-            name, date = curs.fetchone()
-            curs.execute("""
-                SELECT
-                    id, status_code, h1, title, description, created_at
-                FROM
-                    url_checks
-                WHERE
-                    url_id=%s
-                ORDER BY
-                    id
-                DESC;
-                """, (id,)
-            )
-            checks = curs.fetchall()
-
+    url = db.select_url_by_id(id)
+    checks = db.select_url_checks(id)
     return render_template(
         'url.html',
-        url=name,
+        url=url.name,
         id=id,
-        created_at=date,
+        created_at=url.created_at,
         messages=message,
         checks=checks
     )
@@ -124,12 +70,9 @@ def get_url_id(id):
 
 @app.post('/urls/<int:id>/checks')
 def post_check_id(id):
-    with psycopg2.connect(DATABASE_URL) as conn:
-        with conn.cursor() as curs:
-            curs.execute("SELECT name FROM urls WHERE id=%s;", (id,))
-            url = curs.fetchone()[0]
+    url = db.select_url_by_id(id)
     try:
-        response = requests.get(url)
+        response = requests.get(url.name)
         if response.status_code != 200:
             raise requests.RequestException
         status = response.status_code
@@ -140,31 +83,29 @@ def post_check_id(id):
         content = soap.find('meta', {"name": "description"})
         content = content.attrs['content'] if content else ''
         flash('Страница успешно проверена', 'success')
-        with psycopg2.connect(DATABASE_URL) as conn:
-            with conn.cursor() as curs:
-                curs.execute("""
-                                INSERT INTO url_checks (
-                                    url_id,
-                                    status_code,
-                                    h1,
-                                    title,
-                                    description,
-                                    created_at
-                                    )
-                                VALUES (%s, %s, %s, %s, %s, %s)
-                                """,
-                             (
-                                 id,
-                                 status,
-                                 h1,
-                                 title,
-                                 content,
-                                 datetime.date.today()
-                             )
-                             )
+        db.insert_into_url_checks(
+            id,
+            status,
+            h1,
+            title,
+            content,
+            datetime.date.today()
+        )
     except requests.RequestException:
         flash('Произошла ошибка при проверке', 'error')
     return redirect(url_for('get_url_id', id=id))
+
+
+def check_url(url):
+    if not validators.url(url):
+        flash('Некорректный URL', 'error')
+        if len(url) == 0:
+            flash('URL обязателен', 'error')
+    elif len(url) > 255:
+        flash('URL превышает 255 символов', 'error')
+    else:
+        return False
+    return True
 
 
 if __name__ == '__main__':

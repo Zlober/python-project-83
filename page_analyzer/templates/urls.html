@@ -14,17 +14,16 @@
       </tr>
     {% if urls %}
         {% for url in urls %}
-            {% set id, name, date, code = url %}
         <tr>
-          <td>{{ id }}</td>
+          <td>{{ url.id }}</td>
           <td>
-            <a href="/urls/{{ id }}">
-              {{ name }}
+            <a href="/urls/{{ url.id }}">
+              {{ url.name }}
             </a>
           </td>
 
-          <td>{{ date }}</td>
-          <td>{{ code }}</td>
+          <td>{{ url.date }}</td>
+          <td>{{ url.code }}</td>
 
         </tr>
 

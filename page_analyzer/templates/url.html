@@ -58,14 +58,13 @@
     </tr>
     {% if checks %}
         {% for check in checks %}
-            {% set id, status_code, h1, title, description, date = check %}
             <tr>
-                <td>{{ id }}</td>
-                <td>{{ status_code }}</td>
-                <td>{{ h1 }}</td>
-                <td>{{ title }}</td>
-                <td>{{ description }}</td>
-                <td>{{ date }}</td>
+                <td>{{ check.id }}</td>
+                <td>{{ check.status_code }}</td>
+                <td>{{ check.h1 }}</td>
+                <td>{{ check.title }}</td>
+                <td>{{ check.description }}</td>
+                <td>{{ check.created_at }}</td>
             </tr>
         {% endfor %}
       {% endif %}
