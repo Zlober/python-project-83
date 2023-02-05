@@ -39,7 +39,7 @@ def post_urls():
     url = urlparse(url)
     url = f'{url.scheme}://{url.netloc}'
     id = db.create_url(url)
-    if id.id:
+    if id is not None:
         flash('Страница уже существует', 'warning')
         return redirect(url_for('get_url_id', id=id[0]))
     flash('Страница успешно добавлена', category='success')
