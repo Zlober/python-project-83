@@ -36,9 +36,8 @@ def select_all():
                                 urls.id,
                                 urls.name,
                                 COALESCE(
-                                MAX(url_checks.created_at)::varchar,
-                                 ''
-                                 ) AS date,
+                                MAX(url_checks.created_at)::varchar, '')
+                                 AS date,
                                 COALESCE(status_code::varchar, '') AS STATUS
                             FROM urls
                             LEFT JOIN url_checks ON url_checks.url_id = urls.id
