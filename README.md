@@ -22,7 +22,7 @@ Then you have to install all necessary dependencies:
 Create .env file in the root folder and add following variables:
 >> DATABASE_URL = postgresql://{provider}://{user}:{password}@{host}:{port}/{db}
 > 
->> SECRET_KEY = '{your secret key}'
+>> SECRET_KEY = {your secret key}
 
 Run commands from database.sql to create the required tables.
 
