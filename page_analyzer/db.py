@@ -4,8 +4,9 @@ from dotenv import load_dotenv, find_dotenv
 
 from psycopg2.extras import NamedTupleCursor
 
-DATABASE_URL = os.getenv('DATABASE_URL')
+
 load_dotenv(find_dotenv())
+DATABASE_URL = os.getenv('DATABASE_URL')
 
 
 def create_url(url):
